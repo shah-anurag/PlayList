@@ -19,9 +19,8 @@
     [
         {
             "matches":["https://www.youtube.com/*"],
-            "js":["myjquery.js"],
+            "js":["myjquery.js", "jquery-3.3.1.js"],
             "run_at":"document_end"
         }
     ]
-     
 }

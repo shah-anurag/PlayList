@@ -14,6 +14,12 @@ if(video) {
         "ended"
     );
   })
+  video.addEventListener("loadstart", function(event) {
+      //alert("noted");
+      //video.play();
+      //let playbtn = document.getElementsByClassName('ytp-play-button ytp-button')[0];
+      //playbtn.click();
+  })
 } else {
   //console.error("Video element not found");
 }

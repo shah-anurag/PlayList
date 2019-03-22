@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener(
           console.log(links);
           index = (index + 1)%(Math.max(links.length,1));
           console.log("index = " + index);
-          let gotolink = links[index];
+          let gotolink = links[index] + "|?&autoplay=1";
           chrome.tabs.create({active : false, url : gotolink});
         }
         
