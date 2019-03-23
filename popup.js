@@ -7,10 +7,15 @@
 var links = [];//['https://www.youtube.com/watch?v=M-P4QBt-FWw', 'https://www.youtube.com/watch?v=7wtfhZwyrcc']
 //getUrlListAndRestoreInDom();
 //var bkg = chrome.extension.getBackgroundPage();
-var map = new Map;
+var map = [];
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("dom called");
-    getUrlListAndRestoreInDom();
+    chrome.storage.local.get({mapkey:[]}, function(data) {
+        map = data.mapkey;
+        console.log(map);
+        getUrlListAndRestoreInDom();
+    })
 });
 
 function getUrlListAndRestoreInDom(){
@@ -19,21 +24,24 @@ function getUrlListAndRestoreInDom(){
         links = data.key;
         console.log("links = ");
         //alert(links);
+        let index = 0;
         links.forEach(function(link){
             //alert('lnk = ' + link);
-            addUrlToDom(link);
+            addUrlToDom(link, index);
+            index = index + 1;
         });
     });
 }
 
-function addUrlToDom(link) {
+function addUrlToDom(link, index) {
    
    // Extract the title of video
    // = loadInfo(link);
-   $.get({async:false,url:"https://www.youtube.com/oembed?url=" + link + "&format=json"}, function(data, status, xhr){
-    console.log("sucess = " + status);    
-    console.log("data = " + data);
-        let title;
+  //s $.get({async:false,url:"https://www.youtube.com/oembed?url=" + link + "&format=json"}, function(data, status, xhr){
+   // console.log("sucess = " + status);    
+   // console.log("data = " + data);
+        let title = map[index];
+        /*
         if(status.match("success")) {
             console.log("hurrah!");
             console.log(data.title);
@@ -42,6 +50,7 @@ function addUrlToDom(link) {
         else {
             title = status;
         }
+        */
         console.log("title = ")
         console.log(title);
         // Replace link with title if you wanna title in list view
@@ -64,7 +73,9 @@ function addUrlToDom(link) {
             let ind = links.indexOf(value);
             if(ind != -1) {
                 links.splice(ind,1);
+                map.splice(ind,1);
                 chrome.storage.local.set({key:links});
+                chrome.storage.local.set({mapkey:map});
                 chrome.runtime.sendMessage("removeList");
             }
             this.parentNode.parentNode.removeChild(this.parentNode);
@@ -77,7 +88,7 @@ function addUrlToDom(link) {
         //chrome.runtime.sendMessage(
         //    "addList " + candidate.value
         //);
-    } /*, "json"*/);
+   // } /*, "json"*/);
    //alert(title);
 }
 
@@ -125,7 +136,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 let ind = links.indexOf(value);
                 if(ind != -1) {
                     links.splice(ind,1);
+                    map.splice(ind,1);
                     chrome.storage.local.set({key:links});
+                    chrome.storage.local.set({mapkey:map});
                     chrome.runtime.sendMessage("removeList " + value);
                 }
                 this.parentNode.parentNode.removeChild(this.parentNode);
@@ -133,7 +146,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
             ol.appendChild(li);
             links.push(candidate.value);
+            map.push(title);
             chrome.storage.local.set({key:links});
+            chrome.storage.local.set({mapkey:map});
             chrome.runtime.sendMessage(
                 "addList " + candidate.value
             );
