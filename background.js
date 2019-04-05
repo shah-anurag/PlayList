@@ -43,22 +43,24 @@ chrome.runtime.onMessage.addListener(
         console.log(links);
         console.log(request);
         console.log("index = " + index);
+        //console.log(links[index]);
+        console.log(sender.url);
         //!debug
 
         if(request == "reset") {            // Reset the index
           index = 0;
         }
-        else if(request == "ended" && links[index] == sender.url) {   // Play next video
-          if(links.length < index) {
-            index = links.length-2;
+        else if(request == "ended" && (links.length <= index || links[index] == sender.url)) {   // Play next video
+          if(links.length <= index) {
+            index = 0;
           }
           let id = sender.tab.id;
           chrome.tabs.remove(id);
           console.log(links);
           index = (index + 1)%(Math.max(links.length,1));
-          console.log("index = " + index);
+          console.log("index = " + index + " " + links.length);
           let gotolink = links[index] + "|?&autoplay=1";
-          chrome.tabs.create({active : false, url : gotolink});
+          chrome.tabs.create({url : gotolink});
         }
         
         else if(request.match("addList") != null) {
@@ -75,16 +77,19 @@ chrome.runtime.onMessage.addListener(
         }
         
         else if(request.match("removeList") != null) {
-          /*
+          
           console.log(request);
           console.log(sender);
           let value = request.substring(11);
           let ind = links.indexOf(value);
           if(ind > -1) {
-            if(ind == index) index = index - 1;
-            links.splice(ind,1);
+            if(ind == index) {
+              console.log("Here " + ind);
+              index = index - 1;
+            }
+            //links.splice(ind,1);
           }
-          */
+          
            // chrome.storage.local.get({'key':[]}, function(data){
            // link = data.key;
           //})
